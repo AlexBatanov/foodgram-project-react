@@ -106,3 +106,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = '__all__'
+
+class TokenSerializer(serializers.Serializer):
+    email = serializers.CharField(max_length=150)
+    password = serializers.CharField(max_length=150)

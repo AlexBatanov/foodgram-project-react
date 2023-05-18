@@ -9,7 +9,8 @@ class User(AbstractUser):
         max_length=254,
         unique=True,
         verbose_name='E-mail пользователя')
-    password = models.CharField(max_length=100, blank=True)
+    password = models.CharField(max_length=100)
+    auth_token = models.CharField(max_length=100, blank=True)
 
 
 class Tag(models.Model):

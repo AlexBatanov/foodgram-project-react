@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import RecipeViewSet, UserViewSet
+from .views import RecipeViewSet, UserViewSet, TokenViewSet
 
 v1_router = DefaultRouter()
 v1_router.register(
@@ -21,4 +21,5 @@ def get_recipe(request):
 urlpatterns = [
     path('', include(v1_router.urls)),
     path('signin/', get_recipe),
+    path('auth/token/login/', TokenViewSet.as_view())
 ]
