@@ -2,7 +2,8 @@ from django.http import HttpResponse
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import RecipeViewSet, UserViewSet, TokenViewSet
+from .views import RecipeViewSet
+from users.views import TokenLoginViewSet, TokenLogautViewSet, UserViewSet, SetPasswordViewSet
 
 v1_router = DefaultRouter()
 v1_router.register(
@@ -19,7 +20,9 @@ def get_recipe(request):
     return HttpResponse('{"recipe":"sdsd"}')
 
 urlpatterns = [
+    path('users/set_password/', SetPasswordViewSet().as_view()),
     path('', include(v1_router.urls)),
-    path('signin/', get_recipe),
-    path('auth/token/login/', TokenViewSet.as_view())
+    path('auth/token/login/', TokenLoginViewSet().as_view()),
+    path('auth/token/logout/', TokenLogautViewSet().as_view()),
+    
 ]
