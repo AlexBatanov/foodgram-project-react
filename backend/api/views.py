@@ -1,11 +1,16 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import viewsets
 
-from reviews.models import Recipe
-from .serializers import RecipeSerializer
+from reviews.models import Recipe, Tag
+from .serializers import RecipeSerializer, TagSerializer
 
+
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        self.pagination_class = None
+        return super().list(request, *args, **kwargs)
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """

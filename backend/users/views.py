@@ -1,50 +1,77 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
+from rest_framework import filters, permissions, status, viewsets
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import action
 
+from .serializers import SetPasswordSerializer, UserSubscribedSerializer, UsersSerializer
 from .models import User
-from .serializers import UserSerializer, TokenSerializer, SetPasswordSerializer
 
+    
 class UserViewSet(viewsets.ModelViewSet):
     """
     Реализация CRUD для пользователей.
     переопределены методы получения, обновления и удаления,
     для работы со своим профилем исходя из требований.
     """
-    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSubscribedSerializer, UsersSerializer
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    # permission_classes = [IsAdmin]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
+    http_method_names = ('get', 'post', 'patch', 'delete')
+
+    def get_object(self):
+        pk = self.request.parser_context['kwargs']['pk']
+
+        if pk == 'me':
+            instance = get_object_or_404(
+                User,
+                username=self.request.user.username
+            )
+        else:
+            instance = get_object_or_404(User, pk=pk)
+
+        return instance
 
 
-class TokenLoginViewSet(APIView):
-    """Если уже есть токен вызывается исключение - нужно исправить"""
-    def post(self, request):
-        serializer = TokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        
-        user = get_object_or_404(User, email=serializer.data.get('email'))
+    def partial_update(self, request, *args, **kwargs):
 
-        if user.check_password(serializer.data.get('password')):
-            token = Token.objects.create(user=user)
-            return Response({"auth_token": token.key})
-        return Response(data='Не верный пароль', status=status.HTTP_400_BAD_REQUEST)
+        if kwargs.get('pk') == 'me' and request.data.get('role'):
+            return Response(
+                {'error': 'нельзя изменять роль'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+
+        if kwargs.get('pk') == 'me':
+            return Response(
+                {'error': 'просите админа'},
+                status=status.HTTP_405_METHOD_NOT_ALLOWED
+            )
+
+        return super().destroy(request, *args, **kwargs)
     
-class TokenLogautViewSet(APIView):
-    def post(self, request):
-        try:
-            user_token = Token.objects.get(user=request.user)
-            user_token.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Exception:
-            return Response('data: Пользователь не авторизован', status=status.HTTP_401_UNAUTHORIZED)
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return UserSubscribedSerializer
+        return UsersSerializer
+    
+    @action(methods=['POST'], detail=False, url_path='set_password')
+    def set_password(self, request, *args, **kwargs):
+        serializer = SetPasswordSerializer(data=request.data, context={'user': request.user})
+        if serializer.is_valid():
+            user = request.user
+            password = serializer.validated_data.pop('new_password')
+            user.set_password(password)
+            user.save()
 
-class SetPasswordViewSet(APIView):
-    def post(self, request):
-        user = request.user
-        serializer = SetPasswordSerializer(user, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.update(user, serializer.validated_data)
-        return Response(data='Пароль изменен', status=status.HTTP_200_OK)
+            return Response(data='Пароль изменен', status=status.HTTP_200_OK)
+ 
+        return Response(
+            data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)

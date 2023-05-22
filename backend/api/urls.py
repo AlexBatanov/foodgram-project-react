@@ -2,8 +2,8 @@ from django.http import HttpResponse
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import RecipeViewSet
-from users.views import TokenLoginViewSet, TokenLogautViewSet, UserViewSet, SetPasswordViewSet
+from .views import RecipeViewSet, TagViewSet
+from users.views import UserViewSet
 
 v1_router = DefaultRouter()
 v1_router.register(
@@ -14,15 +14,15 @@ v1_router.register(
 v1_router.register(
     r'users',
     UserViewSet,
-    basename='recipes'
+    basename='users'
 )
-def get_recipe(request):
-    return HttpResponse('{"recipe":"sdsd"}')
-
+v1_router.register(
+    r'tags',
+    TagViewSet,
+    basename='tags'
+)
+print(v1_router.get_urls())
 urlpatterns = [
-    path('users/set_password/', SetPasswordViewSet().as_view()),
     path('', include(v1_router.urls)),
-    path('auth/token/login/', TokenLoginViewSet().as_view()),
-    path('auth/token/logout/', TokenLogautViewSet().as_view()),
-    
+    path('auth/', include('djoser.urls.authtoken')),
 ]

@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser
 
 from users.models import User
 
-
 class Tag(models.Model):
     name = models.CharField(max_length=250, verbose_name='Тег')
     color = models.CharField(max_length=7, verbose_name='Цвет')
@@ -19,9 +18,8 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(max_length=250, verbose_name='Название')
     quantity = models.PositiveIntegerField(verbose_name='Количество')
-    units_of_measurement = models.PositiveIntegerField(
-        verbose_name='Вес в граммах'
-    )
+    units_of_measurement = models.CharField(max_length=50, verbose_name='кг', default='kg')
+    
     def __str__(self):
         return self.name
 
