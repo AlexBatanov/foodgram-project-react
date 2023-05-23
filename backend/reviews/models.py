@@ -17,8 +17,8 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=250, verbose_name='Название')
-    quantity = models.PositiveIntegerField(verbose_name='Количество')
-    units_of_measurement = models.CharField(max_length=50, verbose_name='кг', default='kg')
+    quantity = models.PositiveIntegerField(verbose_name='Количество', null=True)
+    measurement_unit = models.CharField(max_length=50, verbose_name='кг')
     
     def __str__(self):
         return self.name
@@ -35,7 +35,7 @@ class Recipe(models.Model):
         max_length=250,
         verbose_name='Название рецепта'
     )
-    image = models.ImageField(verbose_name='Изображение блюда')
+    image = models.ImageField(verbose_name='Изображение блюда', blank=True, null=True)
     description = models.TextField(verbose_name='Описание рецепта')
 
     ingredients = models.ManyToManyField(
@@ -61,20 +61,15 @@ class RecipeIngredient(models.Model):
 
     def __str__(self):
         return self.recipe.name + ' ' + self.ingredient.name
-    
 
-class Subscription(models.Model):
-    subscriber = models.ForeignKey(
-        User,
-        related_name='subscriptions',
-        on_delete=models.CASCADE
-    )
-    author = models.ForeignKey(
-        User,
-        related_name='subscribers',
-        on_delete=models.CASCADE
-    )
 
+class IsFaworite(models.Model):
+    user = models.ForeignKey(User, related_name='faworites', on_delete=models.CASCADE)
+    recepe = models.ForeignKey(Recipe, related_name='faworites', on_delete=models.CASCADE)
+
+class ShoppingCard(models.Model):
+    user = models.ForeignKey(User, related_name='shoppingcard', on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, related_name='shoppingcard', on_delete=models.CASCADE)
 
 
 

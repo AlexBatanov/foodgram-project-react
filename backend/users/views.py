@@ -6,8 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 
-from .serializers import SetPasswordSerializer, UserSubscribedSerializer, UsersSerializer
-from .models import User
+from api.serializers import SetPasswordSerializer, UserSubscribedSerializer, UsersSerializer, SubscriptionSerializer
+from .models import User, Subscription
 
     
 class UserViewSet(viewsets.ModelViewSet):
@@ -75,3 +75,23 @@ class UserViewSet(viewsets.ModelViewSet):
  
         return Response(
             data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(methods=['POST', 'DELETE'], detail=True)
+    def subscribe(self, request, *args, **kwargs):
+        # serializer = SubscriptionSerializer()
+        # if serializer.is_valid():
+        print(request.parser_context['kwargs']['pk'])
+        if request.method == 'POST':
+            author = get_object_or_404(User, pk=request.parser_context['kwargs']['pk'])
+            print(author)
+            Subscription.objects.create(author=get_object_or_404(User, pk=request.parser_context['kwargs']['pk']), subscriber=request.user)
+            return Response(data='Подписан', status=status.HTTP_200_OK)
+        
+        if request.method == 'DELETE':
+            subcipt = Subscription.objects.filter(author__id=request.parser_context['kwargs']['pk'], subscriber=request.user)
+            if subcipt:
+                subcipt.delete()
+                return Response(data='Отписан', status=status.HTTP_200_OK)
+            return Response(data='Не подписан', status=status.HTTP_200_OK)
+        # return Response(
+        #     data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
