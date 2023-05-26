@@ -1,15 +1,14 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 
-from recipes.models import Recipe
-from favorites_shop.serializers import RecepeFavoritShopSerializer
-from .models import Favorites
+from .serializers import RecepeFavoritShopSerializer
+from .models import Favorites, ShoppingCart
+from .helpers import add_recipe_in_card_favorite
 
 User = get_user_model()
+
 
 class FavoritesView(viewsets.ViewSet):
 
@@ -17,22 +16,12 @@ class FavoritesView(viewsets.ViewSet):
 
     @action(methods=['POST', 'DELETE'], detail=True, url_path='favorite')
     def favorites_add(self, request, pk):
+        return add_recipe_in_card_favorite(request=request, pk=pk, serializer=RecepeFavoritShopSerializer, model=Favorites)
 
-        recipe = get_object_or_404(Recipe, pk=pk)
-        favorites = Favorites.objects.filter(user=request.user, recipe=recipe)
 
-        if request.method == 'POST':
-            if favorites:
-                return Response(data='Уже добавлен', status=status.HTTP_400_BAD_REQUEST)
-            
-            Favorites.objects.create(user=request.user, recipe=recipe)
-            return Response(
-                data=RecepeFavoritShopSerializer(recipe).data,
-                status=status.HTTP_200_OK
-            )
-        
-        if favorites:
-            favorites.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+class ShoppingCardView(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated,]
 
-        return Response(data='Не добавлен', status=status.HTTP_400_BAD_REQUEST)
+    @action(methods=['POST', 'DELETE'], detail=True, url_path='shopping_cart')
+    def shopping_card_add(self, request, pk):
+        return add_recipe_in_card_favorite(request=request, pk=pk, serializer=RecepeFavoritShopSerializer, model=ShoppingCart)
