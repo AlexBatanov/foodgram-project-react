@@ -1,97 +1,57 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework import filters, permissions, status, viewsets
-from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
+from django.contrib.auth import get_user_model
+from rest_framework.response import Response
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.pagination import LimitOffsetPagination
 
-from api.serializers import SetPasswordSerializer, UserSubscribedSerializer, UsersSerializer, SubscriptionSerializer
-from .models import User, Subscription
-
-    
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    Реализация CRUD для пользователей.
-    переопределены методы получения, обновления и удаления,
-    для работы со своим профилем исходя из требований.
-    """
-    serializer_class = UserSubscribedSerializer, UsersSerializer
-    queryset = User.objects.all()
-    # permission_classes = [IsAdmin]
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('username',)
-    http_method_names = ('get', 'post', 'patch', 'delete')
-
-    def get_object(self):
-        pk = self.request.parser_context['kwargs']['pk']
-
-        if pk == 'me':
-            instance = get_object_or_404(
-                User,
-                username=self.request.user.username
-            )
-        else:
-            instance = get_object_or_404(User, pk=pk)
-
-        return instance
+from .models import Subscription
+from .serializers import SubscriptionSerializer
 
 
-    def partial_update(self, request, *args, **kwargs):
+User = get_user_model()
 
-        if kwargs.get('pk') == 'me' and request.data.get('role'):
-            return Response(
-                {'error': 'нельзя изменять роль'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+class SubscriptionsView(viewsets.ViewSet):
+    pagination_class = LimitOffsetPagination
+    page_size = 6
 
-        return super().partial_update(request, *args, **kwargs)
+    permission_classes = [IsAuthenticated,]
 
-    def destroy(self, request, *args, **kwargs):
+    @action(methods=['GET'], detail=False, url_path='subscriptions')
+    def get_subscribers(self, request):
+        paginator = self.pagination_class()
+        user = request.user
+        authors = User.objects.filter(subscribers__in=Subscription.objects.filter(user=user))
+        result_page = paginator.paginate_queryset(authors, request)
+        serializer = SubscriptionSerializer(result_page, many=True)
+        # return Response(data=paginator.get_paginated_response(serializer.data), status=status.HTTP_200_OK)
+        return paginator.get_paginated_response(serializer.data)
 
-        if kwargs.get('pk') == 'me':
-            return Response(
-                {'error': 'просите админа'},
-                status=status.HTTP_405_METHOD_NOT_ALLOWED
-            )
 
-        return super().destroy(request, *args, **kwargs)
-    
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return UserSubscribedSerializer
-        return UsersSerializer
-    
-    @action(methods=['POST'], detail=False, url_path='set_password')
-    def set_password(self, request, *args, **kwargs):
-        serializer = SetPasswordSerializer(data=request.data, context={'user': request.user})
-        if serializer.is_valid():
-            user = request.user
-            password = serializer.validated_data.pop('new_password')
-            user.set_password(password)
-            user.save()
+    @action(methods=['POST', 'DELETE'], detail=True, url_path='subscribe')
+    def subscribe(self, request, pk):
+        author = get_object_or_404(User, pk=pk)
+        subscription = Subscription.objects.filter(user=request.user, author=author)
 
-            return Response(data='Пароль изменен', status=status.HTTP_200_OK)
- 
-        return Response(
-            data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    @action(methods=['POST', 'DELETE'], detail=True)
-    def subscribe(self, request, *args, **kwargs):
-        # serializer = SubscriptionSerializer()
-        # if serializer.is_valid():
-        print(request.parser_context['kwargs']['pk'])
         if request.method == 'POST':
-            author = get_object_or_404(User, pk=request.parser_context['kwargs']['pk'])
-            print(author)
-            Subscription.objects.create(author=get_object_or_404(User, pk=request.parser_context['kwargs']['pk']), subscriber=request.user)
-            return Response(data='Подписан', status=status.HTTP_200_OK)
+
+            if author == request.user:
+                return Response(data='Подписываться на себя нельзя', status=status.HTTP_400_BAD_REQUEST)
+            
+            if subscription:
+                return Response(data='Уже подписан', status=status.HTTP_400_BAD_REQUEST)
+            
+            Subscription.objects.create(user=request.user, author=author)
+            return Response(
+                data=SubscriptionSerializer(author).data,
+                status=status.HTTP_200_OK
+            )
         
-        if request.method == 'DELETE':
-            subcipt = Subscription.objects.filter(author__id=request.parser_context['kwargs']['pk'], subscriber=request.user)
-            if subcipt:
-                subcipt.delete()
-                return Response(data='Отписан', status=status.HTTP_200_OK)
-            return Response(data='Не подписан', status=status.HTTP_200_OK)
-        # return Response(
-        #     data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if subscription:
+            subscription.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(data='Нет в подписках', status=status.HTTP_400_BAD_REQUEST)
+    

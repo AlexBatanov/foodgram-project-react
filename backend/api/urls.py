@@ -1,28 +1,20 @@
-from django.http import HttpResponse
-from django.urls import include, path
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from .views import RecipeViewSet, TagViewSet
-from users.views import UserViewSet
+from tags.views import TagViewSet
+from recipes.views import RecipeViewSet
+from favorites_shop.views import FavoritesView
+from users.views import SubscriptionsView
 
-v1_router = DefaultRouter()
-v1_router.register(
-    r'recipes',
-    RecipeViewSet,
-    basename='recipes'
-)
-v1_router.register(
-    r'users',
-    UserViewSet,
-    basename='users'
-)
-v1_router.register(
-    r'tags',
-    TagViewSet,
-    basename='tags'
-)
-print(v1_router.get_urls())
+router = DefaultRouter()
+
+router.register(r'tags', TagViewSet, basename='tags')
+router.register(r'recipes', RecipeViewSet, basename='recipes')
+router.register(r'recipes', FavoritesView, basename='favorites')
+router.register(r'users', SubscriptionsView, basename='subscriptions')
+
 urlpatterns = [
-    path('', include(v1_router.urls)),
+    path('', include(router.urls)),
+    path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
 ]

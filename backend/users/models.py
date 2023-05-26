@@ -1,16 +1,12 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth import get_user_model
 
 
-class User(AbstractUser):
-    email = models.EmailField(max_length=255, unique=True)
-
-    def __str__(self) -> str:
-        return self.get_full_name()
+User = get_user_model()
 
 
 class Subscription(models.Model):
-    subscriber = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         related_name='subscriptions',
         on_delete=models.CASCADE
