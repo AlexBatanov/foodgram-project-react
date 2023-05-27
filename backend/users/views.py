@@ -26,7 +26,6 @@ class SubscriptionsView(viewsets.ViewSet):
         authors = User.objects.filter(subscribers__in=Subscription.objects.filter(user=user))
         result_page = paginator.paginate_queryset(authors, request)
         serializer = SubscriptionSerializer(result_page, many=True)
-        # return Response(data=paginator.get_paginated_response(serializer.data), status=status.HTTP_200_OK)
         return paginator.get_paginated_response(serializer.data)
 
 

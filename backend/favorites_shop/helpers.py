@@ -6,6 +6,8 @@ from recipes.models import Recipe
 
 
 def add_recipe_in_card_favorite(request, pk, serializer, model):
+    """Добавление, удаление рецептов из избранных или карты покупок"""
+
     recipe = get_object_or_404(Recipe, pk=pk)
     obj = model.objects.filter(user=request.user, recipe=recipe)
 
@@ -24,3 +26,15 @@ def add_recipe_in_card_favorite(request, pk, serializer, model):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     return Response(data='Не добавлен', status=status.HTTP_400_BAD_REQUEST)
+
+def create_shopping_dict(recipes):
+    """
+    Проходимся по рецептам
+    Добавляем в словарь ингредиенты
+    Суммируем количество одинаковых ингредиентов
+    """
+
+    ingredients_dict = dict()
+
+    for recipe in recipes:
+        pass

@@ -9,9 +9,9 @@ from users.views import SubscriptionsView
 router = DefaultRouter()
 
 router.register(r'tags', TagViewSet, basename='tags')
+router.register(r'recipes', ShoppingCardView, basename='shopingcards')
 router.register(r'recipes', RecipeViewSet, basename='recipes')
 router.register(r'recipes', FavoritesView, basename='favorites')
-router.register(r'recipes', ShoppingCardView, basename='shopingcards')
 router.register(r'users', SubscriptionsView, basename='subscriptions')
 
 urlpatterns = [

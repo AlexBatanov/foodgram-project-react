@@ -7,11 +7,19 @@ from recipes.models import Recipe
 from favorites_shop.serializers import RecepeFavoritShopSerializer
 from .models import Subscription
 
+
 User = get_user_model()
 
+
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер для создания пользователя
+    отображения пользователя после регистрации
+    """
+
     password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
     email = serializers.EmailField(required=True, validators=[EmailValidator])
+    id = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
@@ -30,7 +38,12 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
     
+    def get_id(self, obj):
+        return User.objects.get(email=obj.get('email')).id
+    
 class UserSubscribedSerializer(serializers.ModelSerializer):
+    """Сериалайзер для отображения всех пользователей"""
+
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -46,6 +59,8 @@ class UserSubscribedSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    """Сериалайзер для отображения пользователей на которых подписан"""
+
     is_subscribed = serializers.BooleanField(default=True)
     recipes_count = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
@@ -60,4 +75,3 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     
     def get_recipes_count(self, obj):
         return obj.recipes.count()
-    
