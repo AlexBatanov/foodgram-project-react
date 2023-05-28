@@ -19,7 +19,7 @@ class Recipe(models.Model):
         max_length=250,
         verbose_name='Название рецепта'
     )
-    image = models.ImageField(verbose_name='Изображение блюда')
+    image = models.ImageField(verbose_name='Изображение блюда', blank=True)
     text = models.TextField(verbose_name='Описание рецепта')
 
     ingredients = models.ManyToManyField(
