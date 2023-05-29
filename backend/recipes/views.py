@@ -6,8 +6,8 @@ from .serializers import RecipeSerializer, RecipeCreateSerializer
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """
-    Набор представлений для просмотра и редактирования
-    для рецептов. 
+    Набор представлений для просмотра и
+    редактирования рецептов. 
     """
 
     queryset = Recipe.objects.all()
