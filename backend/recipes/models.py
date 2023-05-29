@@ -8,6 +8,15 @@ from ingredients.models import Ingredient
 
 User = get_user_model()
 
+
+class RecipeIngredient(models.Model):
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    amount = models.PositiveSmallIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)]
+    )
+
+
 class Recipe(models.Model):
     author = models.ForeignKey(
         User,
@@ -23,15 +32,14 @@ class Recipe(models.Model):
     text = models.TextField(verbose_name='Описание рецепта')
 
     ingredients = models.ManyToManyField(
-        Ingredient,
-        related_name='recipe',
-        through='RecipeIngredient',
+        RecipeIngredient,
+        related_name='recipes',
         verbose_name='Ингредиент'
     )
 
     tags = models.ManyToManyField(
         Tag,
-        related_name='recipe',
+        related_name='recipes',
         verbose_name='Тег'
     )
 
@@ -43,11 +51,3 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-    
-class RecipeIngredient(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
-    amount = models.PositiveSmallIntegerField(
-        default=1,
-        validators=[MinValueValidator(1)]
-    )
