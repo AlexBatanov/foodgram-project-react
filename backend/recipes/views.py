@@ -1,4 +1,7 @@
-from rest_framework import viewsets
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from .models import Recipe
 from .serializers import RecipeSerializer, RecipeCreateSerializer
@@ -15,9 +18,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipeSerializer
-        
-        if self.request.method in ['POST', 'DELETE']:
-            return RecipeCreateSerializer
+        return RecipeCreateSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+    

@@ -1,11 +1,14 @@
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 
 from tags.serializers import TagSerializer
 from users.serializers import UserSubscribedSerializer
 from .models import Recipe
+from ingredients.models import Ingredient
 from favorites_shop.models import Favorites
 from favorites_shop.models import ShoppingCart
-from .helpers import chek_is_favorite_and_is_shoping_list, creat_ingredients
+from .helpers import (chek_is_favorite_and_is_shoping_list,
+                      creat_ingredients_return_tags, cheking_ownership)
 from .models import RecipeIngredient
 
 
@@ -13,6 +16,7 @@ from .models import RecipeIngredient
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     """Сериалайзер для отображения ингредиентов рецепта"""
 
+    id = serializers.IntegerField(source='ingredient.id', read_only=True)
     name = serializers.CharField(source='ingredient.name', read_only=True)
     quantity = serializers.IntegerField(source='ingredient.quantity', read_only=True)
     measurement_unit = serializers.CharField(source='ingredient.measurement_unit', read_only=True)
@@ -20,7 +24,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RecipeIngredient
-        fields = ['name', 'quantity', 'measurement_unit', 'amount']
+        fields = ['id', 'name', 'quantity', 'measurement_unit', 'amount']
 
 
 class IngredientAmountCreateSerializer(serializers.ModelSerializer):
@@ -32,6 +36,10 @@ class IngredientAmountCreateSerializer(serializers.ModelSerializer):
         model = RecipeIngredient
         fields = ['id', 'amount']
 
+    def validate_id(self, id):
+        if not Ingredient.objects.filter(id=id).exists():
+            raise serializers.ValidationError('Ингредиент не найден')
+        return id
 
 class RecipeSerializer(serializers.ModelSerializer):
     """Сериалазер для отображения рецептов"""
@@ -44,7 +52,9 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time']
+        fields = ['id', 'tags', 'author', 'ingredients',
+                  'is_favorited','is_in_shopping_cart',
+                  'name', 'image', 'text', 'cooking_time']
 
     def get_is_favorited(self, obj):
         return chek_is_favorite_and_is_shoping_list(
@@ -71,14 +81,20 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         fields = ['ingredients', 'tags', 'name', 'image', 'text', 'cooking_time']
 
     def create(self, data):
-        ingredients = data.pop('ingredients')
-        tags = data.pop('tags')
-        ingredients_list = creat_ingredients(ingredients)
+        ingredients, tags = creat_ingredients_return_tags(data)
         recipe = Recipe.objects.create(**data)
-        recipe.ingredients.set(ingredients_list)
+        recipe.ingredients.set(ingredients)
         recipe.tags.set(tags)
 
         return recipe
+
+    def update(self, recipe, data):
+        cheking_ownership(self, recipe)
+        ingredients, tags = creat_ingredients_return_tags(data)
+        recipe.ingredients.set(ingredients)
+        recipe.tags.set(tags)
+
+        return super().update(recipe, data)
     
     def to_representation(self, instance):
         request = self.context.get('request')
