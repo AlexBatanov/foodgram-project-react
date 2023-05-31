@@ -1,18 +1,14 @@
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied
 
 from tags.serializers import TagSerializer
 from users.serializers import UserSubscribedSerializer
-from .models import Recipe
 from ingredients.models import Ingredient
-from favorites_shop.models import Favorites
-from favorites_shop.models import ShoppingCart
+from favorites_shop.models import Favorites, ShoppingCart
+from .models import Recipe, RecipeIngredient
 from .helpers import (chek_is_favorite_and_is_shoping_list,
                       creat_ingredients_return_tags, cheking_ownership)
-from .models import RecipeIngredient
 
 
-    
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     """Сериалайзер для отображения ингредиентов рецепта"""
 
@@ -89,7 +85,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, recipe, data):
-        cheking_ownership(self, recipe)
         ingredients, tags = creat_ingredients_return_tags(data)
         recipe.ingredients.set(ingredients)
         recipe.tags.set(tags)

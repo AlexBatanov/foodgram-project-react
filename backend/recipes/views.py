@@ -1,10 +1,8 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework import viewsets
 
 from .models import Recipe
 from .serializers import RecipeSerializer, RecipeCreateSerializer
+from .helpers import cheking_ownership
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -18,10 +16,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipeSerializer
+        if self.request.method == 'PATCH':
+            cheking_ownership(self, self.get_object())
         return RecipeCreateSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+    def perform_destroy(self, instance):
+        cheking_ownership(self, instance)
+        return super().perform_destroy(instance)
 
     

@@ -34,7 +34,9 @@ def creat_ingredients_return_tags(data):
     return ingredients_list, tags
 
 def cheking_ownership(self, recipe):
-        author = recipe.author
-        user = self.context['request'].user
-        if author != user:
-            raise PermissionDenied('Доступ запрещен')
+    """Проверка на автора поста"""
+
+    author = recipe.author
+    user = self.request.user
+    if author != user:
+        raise PermissionDenied('Доступ запрещен')
