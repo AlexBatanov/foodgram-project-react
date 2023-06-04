@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_base64.fields import Base64ImageField
 
 from tags.serializers import TagSerializer
 from users.serializers import UserSubscribedSerializer
@@ -43,6 +44,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     ingredients = RecipeIngredientSerializer(many=True)
     author = UserSubscribedSerializer(read_only=True)
+    image = serializers.ImageField(max_length=None, use_url=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -71,6 +73,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериалайзер для создания и обновления рецептов"""
 
     ingredients = IngredientAmountCreateSerializer(many=True)
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
