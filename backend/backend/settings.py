@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
     'rest_framework',
+    'django_filters',
     'corsheaders',
     'djoser',
 
@@ -156,4 +157,4 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_URLS_REGEX = r'^/api/.*$'
 
-CSRF_TRUSTED_ORIGINS = ['*', 'http://localhost','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['http://localhost','https://*.127.0.0.1']

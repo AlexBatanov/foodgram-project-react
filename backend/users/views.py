@@ -14,6 +14,9 @@ from .serializers import SubscriptionSerializer
 User = get_user_model()
 
 class SubscriptionsView(viewsets.ViewSet):
+    """
+    Набор представлений для подписки, отписки и получения подписок
+    """
     pagination_class = LimitOffsetPagination
     page_size = 6
 

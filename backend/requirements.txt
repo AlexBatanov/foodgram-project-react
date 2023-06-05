@@ -10,6 +10,7 @@ django-templated-mail==1.1.1
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 django-dotenv == 1.4.2
+django-filter==23.2
 drf_base64
 djoser==2.2.0
 gunicorn==20.1.0

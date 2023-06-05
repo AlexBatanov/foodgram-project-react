@@ -17,6 +17,9 @@ User = get_user_model()
 
 
 class FavoritesView(viewsets.ViewSet):
+    """
+    Набор представлений для подписки и отписки на автора 
+    """
 
     permission_classes = [IsAuthenticated,]
 
@@ -30,6 +33,10 @@ class FavoritesView(viewsets.ViewSet):
 
 
 class ShoppingCardView(viewsets.ViewSet):
+    """
+    Набор представлений для добавления, удаления рецепта в покупки
+    и скачивания листа покупок в виде txt файла
+    """
     permission_classes = [IsAuthenticated,]
 
     @action(methods=['POST', 'DELETE'], detail=True, url_path='shopping_cart')

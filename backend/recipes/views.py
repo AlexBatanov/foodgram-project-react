@@ -1,8 +1,10 @@
 from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Recipe
 from .serializers import RecipeSerializer, RecipeCreateSerializer
 from .helpers import cheking_ownership
+from .filters import FilterRecipes
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -12,6 +14,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Recipe.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = FilterRecipes
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -26,5 +30,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         cheking_ownership(self, instance)
         return super().perform_destroy(instance)
+
 
     

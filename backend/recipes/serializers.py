@@ -7,7 +7,7 @@ from ingredients.models import Ingredient
 from favorites_shop.models import Favorites, ShoppingCart
 from .models import Recipe, RecipeIngredient
 from .helpers import (chek_is_favorite_and_is_shoping_list,
-                      creat_ingredients_return_tags, cheking_ownership)
+                      creat_ingredients_return_tags)
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):

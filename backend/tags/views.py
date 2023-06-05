@@ -5,6 +5,10 @@ from .models import Tag
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Набор представлений для просмотра тегов
+    """
+
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
 

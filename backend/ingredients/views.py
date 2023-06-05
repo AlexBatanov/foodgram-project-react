@@ -5,6 +5,11 @@ from .models import Ingredient
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Набор представлений для просмотра рецептов
+    Реализована фильтрация по названию
+    """
+
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
     filter_backends = [filters.SearchFilter]
