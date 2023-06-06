@@ -49,5 +49,8 @@ class Recipe(models.Model):
         verbose_name='время готовки в минутах'
     )
 
+    class Meta:
+        ordering = ['-id']
+
     def __str__(self):
         return self.name
