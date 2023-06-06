@@ -23,5 +23,6 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = Ingredient.objects.all()
         search_term = self.request.query_params.get('name', None)
         if search_term:
-            queryset = queryset.filter(name__startswith=search_term) | queryset.filter(name__icontains=search_term)
+            queryset = (queryset.filter(name__startswith=search_term) |
+                        queryset.filter(name__icontains=search_term))
         return queryset

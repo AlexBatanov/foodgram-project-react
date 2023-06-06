@@ -10,7 +10,7 @@ from .filters import FilterRecipes
 class RecipeViewSet(viewsets.ModelViewSet):
     """
     Набор представлений для просмотра и
-    редактирования рецептов. 
+    редактирования рецептов.
     """
 
     queryset = Recipe.objects.all()
@@ -30,6 +30,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         cheking_ownership(self, instance)
         return super().perform_destroy(instance)
-
-
-    

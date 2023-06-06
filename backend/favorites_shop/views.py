@@ -18,7 +18,7 @@ User = get_user_model()
 
 class FavoritesView(viewsets.ViewSet):
     """
-    Набор представлений для подписки и отписки на автора 
+    Набор представлений для подписки и отписки на автора
     """
 
     permission_classes = [IsAuthenticated,]
@@ -60,5 +60,3 @@ class ShoppingCardView(viewsets.ViewSet):
 
         return FileResponse(open(file_path, 'rb'), as_attachment=True,
                             filename='data.txt')
-
-

@@ -15,8 +15,11 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(source='ingredient.id', read_only=True)
     name = serializers.CharField(source='ingredient.name', read_only=True)
-    quantity = serializers.IntegerField(source='ingredient.quantity', read_only=True)
-    measurement_unit = serializers.CharField(source='ingredient.measurement_unit', read_only=True)
+    quantity = serializers.IntegerField(source='ingredient.quantity',
+                                        read_only=True)
+    measurement_unit = serializers.CharField(
+        source='ingredient.measurement_unit', read_only=True
+    )
     amount = serializers.IntegerField()
 
     class Meta:
@@ -38,6 +41,7 @@ class IngredientAmountCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Ингредиент не найден')
         return id
 
+
 class RecipeSerializer(serializers.ModelSerializer):
     """Сериалазер для отображения рецептов"""
 
@@ -51,7 +55,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ['id', 'tags', 'author', 'ingredients',
-                  'is_favorited','is_in_shopping_cart',
+                  'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time']
 
     def get_is_favorited(self, obj):
@@ -77,7 +81,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ['ingredients', 'tags', 'name', 'image', 'text', 'cooking_time']
+        fields = ['ingredients', 'tags', 'name',
+                  'image', 'text', 'cooking_time']
 
     def create(self, data):
         ingredients, tags = creat_ingredients_return_tags(data)
@@ -93,9 +98,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
 
         return super().update(recipe, data)
-    
+
     def to_representation(self, instance):
         request = self.context.get('request')
         context = {'request': request}
         return RecipeSerializer(instance, context=context).data
-

@@ -6,7 +6,9 @@ from .models import Recipe, RecipeIngredient
 class RecipeIngredientInline(admin.TabularInline):
     model = Recipe.ingredients.through
 
+
 admin.site.register(RecipeIngredient)
+
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):

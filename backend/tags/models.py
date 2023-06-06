@@ -9,5 +9,6 @@ class Tag(models.Model):
         unique=True,
         verbose_name='Slug'
     )
+
     def __str__(self):
         return self.name
