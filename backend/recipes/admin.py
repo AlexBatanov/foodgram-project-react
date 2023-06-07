@@ -5,6 +5,7 @@ from .models import Recipe, RecipeIngredient
 
 class RecipeIngredientInline(admin.TabularInline):
     model = Recipe.ingredients.through
+    min_num = 1
 
 
 admin.site.register(RecipeIngredient)

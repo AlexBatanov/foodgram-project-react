@@ -14,8 +14,12 @@ class Command(BaseCommand):
         csv_file = options['csv_file']
         with open(csv_file, 'r') as f:
             reader = csv.reader(f)
+            ingredients = []
             for row in reader:
                 name, unit = row
-                product = Ingredient(name=name, measurement_unit=unit)
-                product.save()
+                ingredients.append(
+                    Ingredient(name=name, measurement_unit=unit)
+                )
+            Ingredient.objects.bulk_create(ingredients)
+
         self.stdout.write(self.style.SUCCESS('Data loaded successfully'))

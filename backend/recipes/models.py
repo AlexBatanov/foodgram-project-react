@@ -1,23 +1,45 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from tags.models import Tag
 from ingredients.models import Ingredient
+from .constants import (MIN_AMOUNT, MAX_AMOUNT,
+                        MIN_COOKING_TIME, MAX_COOKING_TIME)
 
 
 User = get_user_model()
 
 
 class RecipeIngredient(models.Model):
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
-    amount = models.PositiveSmallIntegerField(
-        default=1,
-        validators=[MinValueValidator(1)]
+    """
+    Ингредиент и его количество
+    """
+
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        verbose_name='Ингредиент'
     )
+    amount = models.PositiveSmallIntegerField(
+        default=MIN_AMOUNT,
+        validators=[MinValueValidator(MIN_AMOUNT),
+                    MaxValueValidator(MAX_AMOUNT)],
+        verbose_name='Количество'
+    )
+
+    class Meta:
+        ordering = ['ingredient']
+
+    def __str__(self):
+        return f'{self.ingredient}'
 
 
 class Recipe(models.Model):
+    """
+    Рецепт
+    """
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -44,8 +66,9 @@ class Recipe(models.Model):
     )
 
     cooking_time = models.PositiveSmallIntegerField(
-        default=1,
-        validators=[MinValueValidator(1)],
+        default=MIN_COOKING_TIME,
+        validators=[MinValueValidator(MIN_COOKING_TIME),
+                    MaxValueValidator(MAX_COOKING_TIME)],
         verbose_name='время готовки в минутах'
     )
 

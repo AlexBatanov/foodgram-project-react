@@ -6,8 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
+from django.conf import settings
 
-from backend.settings import MEDIA_ROOT
 from .serializers import RecepeFavoritShopSerializer
 from .models import Favorites, ShoppingCart
 from .helpers import (add_recipe_in_card_favorite,
@@ -53,7 +53,7 @@ class ShoppingCardView(viewsets.ViewSet):
         result_ingredients = create_shopping_dict(shopping_cart)
         create_shopping_cart_txt(result_ingredients)
 
-        file_path = os.path.join(MEDIA_ROOT, 'shopping_cart.txt')
+        file_path = os.path.join(settings.MEDIA_ROOT, 'shopping_cart.txt')
 
         if not os.path.exists(file_path):
             return Response({'error': 'Файл не найден'})

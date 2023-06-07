@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Recipe
 from .serializers import RecipeSerializer, RecipeCreateSerializer
-from .helpers import cheking_ownership
+from .helpers import checking_ownership
 from .filters import FilterRecipes
 
 
@@ -21,12 +21,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.method == 'GET':
             return RecipeSerializer
         if self.request.method == 'PATCH':
-            cheking_ownership(self, self.get_object())
+            checking_ownership(self, self.get_object())
         return RecipeCreateSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
     def perform_destroy(self, instance):
-        cheking_ownership(self, instance)
+        checking_ownership(self, instance)
         return super().perform_destroy(instance)

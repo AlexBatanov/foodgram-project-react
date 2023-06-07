@@ -6,8 +6,8 @@ from users.serializers import UserSubscribedSerializer
 from ingredients.models import Ingredient
 from favorites_shop.models import Favorites, ShoppingCart
 from .models import Recipe, RecipeIngredient
-from .helpers import (chek_is_favorite_and_is_shoping_list,
-                      creat_ingredients_return_tags)
+from .helpers import (check_is_favorite_and_is_shoping_list,
+                      create_ingredients_return_tags)
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
@@ -59,14 +59,14 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'name', 'image', 'text', 'cooking_time']
 
     def get_is_favorited(self, obj):
-        return chek_is_favorite_and_is_shoping_list(
+        return check_is_favorite_and_is_shoping_list(
             context=self.context,
             obj=obj,
             model=Favorites
         )
 
     def get_is_in_shopping_cart(self, obj):
-        return chek_is_favorite_and_is_shoping_list(
+        return check_is_favorite_and_is_shoping_list(
             context=self.context,
             obj=obj,
             model=ShoppingCart
@@ -85,7 +85,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                   'image', 'text', 'cooking_time']
 
     def create(self, data):
-        ingredients, tags = creat_ingredients_return_tags(data)
+        ingredients, tags = create_ingredients_return_tags(data)
         recipe = Recipe.objects.create(**data)
         recipe.ingredients.set(ingredients)
         recipe.tags.set(tags)
@@ -93,7 +93,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, recipe, data):
-        ingredients, tags = creat_ingredients_return_tags(data)
+        ingredients, tags = create_ingredients_return_tags(data)
         recipe.ingredients.set(ingredients)
         recipe.tags.set(tags)
 

@@ -5,7 +5,7 @@ from ingredients.models import Ingredient
 from .models import RecipeIngredient
 
 
-def chek_is_favorite_and_is_shoping_list(context, obj, model):
+def check_is_favorite_and_is_shoping_list(context, obj, model):
     """Проверяет нахождение объекта в избранном или в карте покупок"""
 
     user = context['request'].user
@@ -15,7 +15,7 @@ def chek_is_favorite_and_is_shoping_list(context, obj, model):
     )
 
 
-def creat_ingredients_return_tags(data):
+def create_ingredients_return_tags(data):
     """
     Проверяет наличие ингредиента по id
     создает объекты ингредиентов с количеством
@@ -29,15 +29,15 @@ def creat_ingredients_return_tags(data):
     for ingredient in ingredients:
         ingredient_id, amount = ingredient.get('id'), ingredient.get('amount')
         ingredient = get_object_or_404(Ingredient, id=ingredient_id)
-        ingredien_amount, _ = RecipeIngredient.objects.get_or_create(
-            ingredient=ingredient, amount=amount
-        )
+        ingredien_amount = RecipeIngredient(ingredient=ingredient,
+                                            amount=amount)
         ingredients_list.append(ingredien_amount)
+    RecipeIngredient.objects.bulk_create(ingredients_list)
 
     return ingredients_list, tags
 
 
-def cheking_ownership(self, recipe):
+def checking_ownership(self, recipe):
     """Проверка на автора поста"""
 
     author = recipe.author
