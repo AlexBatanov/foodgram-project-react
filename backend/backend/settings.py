@@ -138,4 +138,4 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_URLS_REGEX = r'^/api/.*$'
 
-# CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://*158.160.18.240', 'http://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://158.160.18.240', 'http://127.0.0.1']
