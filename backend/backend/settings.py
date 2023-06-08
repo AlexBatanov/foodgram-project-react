@@ -9,13 +9,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '192.168.0.1',
-    '158.160.18.240',
-    'backend',
-    'db'
+ALLOWED_HOSTS = ['*'
+    # 'localhost',
+    # '127.0.0.1',
+    # '158.160.18.240',
+    # 'backend',
+    # 'db'
 ]
 
 INSTALLED_APPS = [
@@ -145,4 +144,4 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_URLS_REGEX = r'^/api/.*$'
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://158.160.18.240']
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://*158.160.18.240', 'http://*.127.0.0.1']
