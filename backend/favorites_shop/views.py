@@ -29,7 +29,7 @@ class FavoritesView(viewsets.ViewSet):
             request=request,
             pk=pk, serializer=RecepeFavoritShopSerializer,
             model=Favorites
-            )
+        )
 
 
 class ShoppingCardView(viewsets.ViewSet):
@@ -45,7 +45,7 @@ class ShoppingCardView(viewsets.ViewSet):
             request=request, pk=pk,
             serializer=RecepeFavoritShopSerializer,
             model=ShoppingCart
-            )
+        )
 
     @action(methods=['GET'], detail=False, url_path='download_shopping_cart')
     def get_download_shopping_cart(self, request):
