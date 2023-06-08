@@ -3,10 +3,6 @@ services:
 
   db:
     image: postgres:13.0-alpine
-    # environment:
-    #   POSTGRES_USER: myuser
-    #   POSTGRES_PASSWORD: password
-    #   POSTGRES_DB: food
     ports:
       - "5432:5432"
     volumes:
@@ -15,11 +11,10 @@ services:
       - ./.env
   
   backend:
-      # image: andyplo/foodgram_backend:v.21.12.22
-      build:
-        context: ../backend
-        dockerfile: Dockerfile
-      # command: bash -c "usermod -aG docker $USER && python manage.py runserver 0.0.0.0:8000"
+      image: alexandrbatanov/foodgramm:tagname
+      # build:
+      #   context: ../backend
+      #   dockerfile: Dockerfile
       restart: always
       volumes:
         - static_value:/app/static/
@@ -30,9 +25,10 @@ services:
         - ./.env
 
   frontend:
-    build:
-        context: ../frontend
-        dockerfile: Dockerfile
+    image: alexandrbatanov/foodgramm_front:tagname
+    # build:
+    #     context: ../frontend
+    #     dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
