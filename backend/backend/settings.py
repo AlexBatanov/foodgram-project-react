@@ -141,3 +141,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CSRF_TRUSTED_ORIGINS = ['http://158.160.18.240']
 CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
