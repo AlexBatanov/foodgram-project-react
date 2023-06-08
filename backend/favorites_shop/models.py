@@ -22,7 +22,7 @@ class Favorites(models.Model):
         related_name='favorites',
         verbose_name='Рецепт'
     )
-    
+
     class Meta:
         ordering = ['-id']
 
@@ -45,7 +45,7 @@ class ShoppingCart(models.Model):
         related_name='shopping_cart',
         verbose_name='Рецепт',
     )
-    
+
     class Meta:
         ordering = ['-id']
 
