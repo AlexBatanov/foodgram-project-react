@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-)bj5@7e5+cnzfk+^v1pf_1goa*9wz7-6xa+$8#yrw&z^2$)q=$
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['158.160.18.240']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -138,8 +138,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS_ORIGIN_ALLOW_ALL = True
 
 # CORS_URLS_REGEX = r'^/api/.*$'
-
+# CSRF_COOKIE_SECURE = False
+# CSRF_COOKIE_HTTPONLY = False
 # CSRF_TRUSTED_ORIGINS = ['http://158.160.18.240']
-CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = False
+CSRF_TRUSTED_ORIGINS = ['http://158.160.18.240']
