@@ -12,9 +12,6 @@ services:
   
   backend:
       image: alexandrbatanov/foodgramm:tagname
-      # build:
-      #   context: ../backend
-      #   dockerfile: Dockerfile
       restart: always
       volumes:
         - static_value:/app/static/
@@ -26,9 +23,6 @@ services:
 
   frontend:
     image: alexandrbatanov/foodgramm_front:tagname
-    # build:
-    #     context: ../frontend
-    #     dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
