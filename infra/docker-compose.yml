@@ -28,7 +28,7 @@ services:
     image: alexandrbatanov/foodgramm_front:tagname
     # build:
     #     context: ../frontend
-    #     dockerfile: Dockerfile
+    #     dockerfile:  Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
