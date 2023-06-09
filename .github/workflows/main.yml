@@ -60,9 +60,9 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker-compose stop
-            sudo docker-compose rm web
+            sudo docker-compose rm backend
             sudo docker-compose rm frontend
-            sudo docker-compose pull web
+            sudo docker-compose pull backend
             sudo docker-compose pull frontend
             rm .env
             touch .env

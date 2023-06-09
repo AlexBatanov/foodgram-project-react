@@ -1,8 +1,35 @@
-# praktikum_new_diplom
+# Foodgram
+### Описание
+Продуктовый помощник - на этом сервисе пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
+
+### Технологии
+* Python 3.9
+* Django 4.2
+* Django REST framework
+* Postgres
+* Docker
+* Nginx
+* Yandex.Cloud
+* CI на GitHub Action
+
 ### Для локальной сборки
 
+Клонировать репозиторий и перейти в него в командной строке:
+```
+git clone git@github.com:AlexBatanov/api_yamdb.git
+```
+
+Перейти в каталог
+```
 cd infra
-создать .env 
+```
+
+создать .env
+```
+touch .env
+```
+
+Заполнить
 ```
 DB_ENGINE=django.db.backends.postgresql
 DB_NAME=namebd
@@ -12,42 +39,48 @@ DB_HOST=db
 DB_PORT=5432
 SECRET_KEY=secretkey django
 ```
-создание и запуск контейнера
 
+Создание и запуск контейнера
 ```
 sudo docker compose up -d
 ```
 
-создать миграции
-
+Создать миграции
 ```
 sudo docker compose exec backend python manage.py migrate
 ```
 
-создание суперюзера
-
+Создание суперюзера
 ```
 sudo docker compose exec backend python manage.py createsuperuser
 ```
 
-собрать статику
-
+Собрать статику
 ```
 sudo docker compose exec backend python manage.py collectstatic --noinput
 ```
 
-заполнить бд ингредиентами
-
+Заполнить бд ингредиентами
 ```
 sudo docker compose exec backend python manage.py loadingredients ingredients.csv
 ```
 
-проект будет доступен по адресу 
-
+Проект будет доступен по адресу 
 ```
- http://localhost/
+http://localhost/
 ```
 
-в админ панели создать теги для успешной регистрации рецептов
+В админ панели создать теги для успешного создания рецептов
 
-P.S.: редок после деплоя на боевой сервер переделается
+### Доступ к проекту
+
+http://158.160.67.200
+
+админка
+```
+login -> admin
+password -> admin
+```
+
+### Автор
+[Alexandr](https://github.com/AlexBatanov)
